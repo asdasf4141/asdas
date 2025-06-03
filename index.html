@@ -69,7 +69,7 @@
     #info-display button {
       font-size: 14px;
       padding: 6px 12px;
-      margin-top: 4px;
+      margin: 4px 4px 0 0;
       cursor: pointer;
     }
 
@@ -95,8 +95,6 @@
     <option value="공강시간" selected>공강시간</option>
     <option value="버스정류장">버스정류장</option>
   </select>
-  <label><input type="radio" name="linkMode" value="custom" checked> 설정한 링크</label>
-  <label><input type="radio" name="linkMode" value="map"> 구글맵</label>
 </div>
 
 <div id="map-container">
@@ -106,97 +104,22 @@
 <div id="info-display"></div>
 
 <script>
+  const INSTAGRAM_URL = 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg==';
+
   const locations = [
-    {
-      situation: '공강시간',
-      name: '순천향대 도서관',
-      xPercent: 66,
-      yPercent: 18,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '1'
-    },
-    {
-      situation: '공강시간',
-      name: '인문과학관',
-      xPercent: 50,
-      yPercent: 30,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '2'
-    },
-    {
-      situation: '공강시간',
-      name: '자연과학관',
-      xPercent: 40,
-      yPercent: 45,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '3'
-    },
-    {
-      situation: '공강시간',
-      name: '향설생활관 1',
-      xPercent: 30,
-      yPercent: 60,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '4'
-    },
-    {
-      situation: '공강시간',
-      name: '향설생활관 2',
-      xPercent: 70,
-      yPercent: 65,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '5'
-    },
-    {
-      situation: '버스정류장',
-      name: '후문 정류장',
-      xPercent: 15,
-      yPercent: 80,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '1'
-    },
-    {
-      situation: '버스정류장',
-      name: '향설2관 앞 정류장',
-      xPercent: 72,
-      yPercent: 68,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '2'
-    },
-    {
-      situation: '버스정류장',
-      name: '도서관 정류장',
-      xPercent: 66,
-      yPercent: 22,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '3'
-    },
-    {
-      situation: '버스정류장',
-      name: '정문 정류장',
-      xPercent: 90,
-      yPercent: 10,
-      description: 'ASDF',
-      customLink: '#',
-      mapLink: '#',
-      number: '4'
-    }
+    // 공강시간
+    { situation: '공강시간', name: '순천향대 도서관', xPercent: 66, yPercent: 18, description: 'ASDF', customLink: '#', mapLink: '#', number: '1' },
+    { situation: '공강시간', name: '인문과학관', xPercent: 50, yPercent: 30, description: 'ASDF', customLink: '#', mapLink: '#', number: '2' },
+    { situation: '공강시간', name: '자연과학관', xPercent: 40, yPercent: 45, description: 'ASDF', customLink: '#', mapLink: '#', number: '3' },
+    { situation: '공강시간', name: '향설생활관 1', xPercent: 30, yPercent: 60, description: 'ASDF', customLink: '#', mapLink: '#', number: '4' },
+    { situation: '공강시간', name: '향설생활관 2', xPercent: 70, yPercent: 65, description: 'ASDF', customLink: '#', mapLink: '#', number: '5' },
+
+    // 버스정류장
+    { situation: '버스정류장', name: '정문', xPercent: 81.9, yPercent: 67.8, description: '정문 ⮕ 후문', customLink: INSTAGRAM_URL, mapLink: '#', number: '1' },
+    { situation: '버스정류장', name: '후문', xPercent: 17.7, yPercent: 82.2, description: '후문 ⮕ 향설3관', customLink: INSTAGRAM_URL, mapLink: '#', number: '2' },
+    { situation: '버스정류장', name: '향설3관', xPercent: 43.2, yPercent: 6.8, description: '향설 3관 ⮕ 향설 2관', customLink: INSTAGRAM_URL, mapLink: '#', number: '3' },
+    { situation: '버스정류장', name: '향설 2관', xPercent: 62.7, yPercent: 22.3, description: '향설 2관 ⮕ 향설 기념 중앙도서관', customLink: INSTAGRAM_URL, mapLink: '#', number: '4' },
+    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 60.6, yPercent: 44.6, description: '향설 기념 중앙도서관 ⮕ 정문', customLink: INSTAGRAM_URL, mapLink: '#', number: '5' }
   ];
 
   let campusMap;
@@ -233,28 +156,21 @@
       marker.style.top = y + 'px';
       marker.innerText = loc.number;
       marker.style.display = 'block';
-      marker.onclick = () => openLocation(loc);
       mapContainer.appendChild(marker);
 
       infoDisplay.innerHTML += `
         <div>
           <strong>${loc.number}번 ${loc.name}</strong><br>
           <p>${loc.description}</p>
-          <button onclick="openLocation(locations.find(l => l.name === '${loc.name}'))">이동</button>
+          <button onclick="window.open('${loc.mapLink}', '_blank')">구글맵으로 이동</button>
+          <button onclick="window.open('${loc.customLink}', '_blank')">인스타 주소로 이동</button>
         </div>
       `;
     });
-  }
-
-  function openLocation(location) {
-    const mode = document.querySelector('input[name="linkMode"]:checked').value;
-    const url = (mode === 'map') ? location.mapLink : location.customLink;
-    window.open(url, '_blank');
   }
 </script>
 
 </body>
 </html>
-
 
 
