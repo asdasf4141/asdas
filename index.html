@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>캠퍼스 상황 지도</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .options {
+      margin-bottom: 15px;
+    }
+
+    #map-container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    #campus-map {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid #ccc;
+    }
+
+    .marker {
+      position: absolute;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      text-align: center;
+      line-height: 24px;
+      cursor: pointer;
+      z-index: 5;
+      transform: translate(-50%, -50%);
+    }
+
+    #info-display {
+      margin: 20px auto;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      max-width: 1000px;
+      display: none;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    #info-display button {
+      font-size: 14px;
+      padding: 6px 12px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .marker {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        line-height: 20px;
+      }
+
+      #info-display {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h2>상황 선택</h2>
+<div class="options">
+  <label><input type="radio" name="linkMode" value="custom" checked> 설정한 링크</label>
+  <label><input type="radio" name="linkMode" value="map"> 구글맵</label>
+</div>
+
+<button onclick="showMarker('도서관')">공강시간</button>
+
+<div id="map-container">
+  <img id="campus-map" src="campusmap.jpg" alt="캠퍼스 지도" onload="initializeMap()">
+
+  <div id="marker-library" class="marker" onclick="openLocation('도서관')" style="display:none;"></div>
+  <div id="marker-human" class="marker" onclick="openLocation('인문과학관')" style="display:none;"></div>
+  <div id="marker-science" class="marker" onclick="openLocation('자연과학관')" style="display:none;"></div>
+  <div id="marker-dorm1" class="marker" onclick="openLocation('향설생활관1')" style="display:none;"></div>
+  <div id="marker-dorm2" class="marker" onclick="openLocation('향설생활관2')" style="display:none;"></div>
+</div>
+
+<div id="info-display"></div>
+
+<script>
+  const locations = {
+    '도서관': {
+      xPercent: 66,
+      yPercent: 18,
+      marker: 'marker-library',
+      name: '순천향대 도서관',
+      description: '조용히 공부할 수 있는 순천향대 도서관입니다.',
+      customLink: 'https://library.example.com',
+      mapLink: 'https://maps.google.com?q=37.123456,127.123456',
+      number: '1'
+    },
+    '인문과학관': {
+      xPercent: 50,
+      yPercent: 30,
+      marker: 'marker-human',
+      name: '인문과학관',
+      description: '인문학 관련 수업이 진행되는 건물입니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '2'
+    },
+    '자연과학관': {
+      xPercent: 40,
+      yPercent: 45,
+      marker: 'marker-science',
+      name: '자연과학관',
+      description: '과학 관련 실험과 수업이 진행됩니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '3'
+    },
+    '향설생활관1': {
+      xPercent: 30,
+      yPercent: 60,
+      marker: 'marker-dorm1',
+      name: '향설생활관 1',
+      description: '학생 기숙사 (1관)',
+      customLink: '#',
+      mapLink: '#',
+      number: '4'
+    },
+    '향설생활관2': {
+      xPercent: 70,
+      yPercent: 65,
+      marker: 'marker-dorm2',
+      name: '향설생활관 2',
+      description: '학생 기숙사 (2관)',
+      customLink: '#',
+      mapLink: '#',
+      number: '5'
+    }
+  };
+
+  let campusMap;
+
+  function initializeMap() {
+    campusMap = document.getElementById('campus-map');
+    for (const place in locations) {
+      const location = locations[place];
+      const marker = document.getElementById(location.marker);
+      const rect = campusMap.getBoundingClientRect();
+      const x = (location.xPercent / 100) * rect.width;
+      const y = (location.yPercent / 100) * rect.height;
+      marker.style.left = x + 'px';
+      marker.style.top = y + 'px';
+      marker.innerText = location.number;
+      marker.style.display = 'block';
+    }
+  }
+
+  function showMarker(place) {
+    const location = locations[place];
+    const infoDisplay = document.getElementById('info-display');
+    infoDisplay.style.display = 'block';
+    infoDisplay.innerHTML = `
+      <strong>${location.number}번 ${location.name}</strong><br>
+      <p>${location.description}</p>
+      <button onclick="openLocation('${place}')">이동</button>
+    `;
+  }
+
+  function openLocation(place) {
+    const location = locations[place];
+    const mode = document.querySelector('input[name="linkMode"]:checked').value;
+    const url = (mode === 'map') ? location.mapLink : location.customLink;
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
+
