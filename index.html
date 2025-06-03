@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>캠퍼스 상황 지도</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #map-container {
+      position: relative;
+      width: 1000px;
+      margin-top: 20px;
+    }
+    #campus-map {
+      width: 100%;
+      display: block;
+    }
+    .marker {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 20px solid red;
+      cursor: pointer;
+    }
+    .info-box {
+      position: absolute;
+      background: white;
+      padding: 8px;
+      border: 1px solid #ccc;
+      width: 180px;
+      display: none;
+      font-size: 12px;
+      z-index: 10;
+    }
+    .options {
+      margin-bottom: 10px;
+    }
+    .info-box button {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>상황 선택</h2>
+<div class="options">
+  <label><input type="radio" name="linkMode" value="custom" checked> 설정한 링크</label>
+  <label><input type="radio" name="linkMode" value="map"> 구글맵</label>
+</div>
+
+<button onclick="showMarker('도서관')">도서관 가기</button>
+
+<div id="map-container">
+  <img id="campus-map" src="campusmap.jpg" alt="캠퍼스 지도">
+  <div id="marker-library" class="marker" onclick="openLibraryLink()"></div>
+  <div id="info-box-library" class="info-box"></div>
+</div>
+
+<script>
+  const locations = {
+    '도서관': {
+      // 향설도서관 위치로 수정한 좌표 (대략적 위치: 이미지 우측 상단)
+      x: 660,
+      y: 180,
+      marker: 'marker-library',
+      infoBox: 'info-box-library',
+      name: '향설도서관',
+      description: '조용히 공부할 수 있는 향설도서관입니다.',
+      customLink: 'https://library.example.com',
+      mapLink: 'https://www.google.com/maps?q=37.123456,127.123456'
+    }
+  };
+
+  function showMarker(place) {
+    const location = locations[place];
+
+    const marker = document.getElementById(location.marker);
+    marker.style.left = location.x + 'px';
+    marker.style.top = location.y + 'px';
+    marker.style.display = 'block';
+
+    const infoBox = document.getElementById(location.infoBox);
+    infoBox.style.left = (location.x - 190) + 'px';
+    infoBox.style.top = (location.y - 130) + 'px';
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = `
+      <strong>${location.name}</strong><br>
+      <p>${location.description}</p>
+      <button onclick="openLibraryLink()">이동</button>
+    `;
+  }
+
+  function openLibraryLink() {
+    const mode = document.querySelector('input[name="linkMode"]:checked').value;
+    const location = locations['도서관'];
+    const url = (mode === 'map') ? location.mapLink : location.customLink;
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
+
+
