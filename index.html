@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>캠퍼스 상황 지도</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .options {
+      margin-bottom: 15px;
+    }
+
+    #map-container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    #campus-map {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid #ccc;
+    }
+
+    .marker {
+      position: absolute;
+      background: red;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      text-align: center;
+      line-height: 24px;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    #info-display {
+      margin: 20px auto;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      max-width: 1000px;
+      display: none;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    #info-display button {
+      font-size: 14px;
+      padding: 6px 12px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .marker {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        line-height: 20px;
+      }
+
+      #info-display {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h2>상황 선택</h2>
+<div class="options">
+  <label><input type="radio" name="linkMode" value="custom" checked> 설정한 링크</label>
+  <label><input type="radio" name="linkMode" value="map"> 구글맵</label>
+</div>
+
+<button onclick="showMarker('도서관')">도서관 가기</button>
+
+<div id="map-container">
+  <img id="campus-map" src="campusmap.jpg" alt="캠퍼스 지도">
+  <div id="marker-library" class="marker" onclick="openLibraryLink()" style="display:none;"></div>
+</div>
+
+<div id="info-display"></div>
+
+<script>
+  const locations = {
+    '도서관': {
+      x: 660,
+      y: 180,
+      marker: 'marker-library',
+      name: '향설도서관',
+      description: '조용히 공부할 수 있는 향설도서관입니다.',
+      customLink: 'https://library.example.com',
+      mapLink: 'https://www.google.com/maps?q=37.123456,127.123456',
+      number: '1'
+    }
+  };
+
+  function showMarker(place) {
+    const location = locations[place];
+    const marker = document.getElementById(location.marker);
+
+    marker.style.left = location.x + 'px';
+    marker.style.top = location.y + 'px';
+    marker.innerText = location.number;
+    marker.style.display = 'block';
+
+    const infoDisplay = document.getElementById('info-display');
+    infoDisplay.style.display = 'block';
+    infoDisplay.innerHTML = `
+      <strong>${location.name}</strong><br>
+      <p>${location.description}</p>
+      <button onclick="openLibraryLink()">이동</button>
+    `;
+  }
+
+  function openLibraryLink() {
+    const mode = document.querySelector('input[name="linkMode"]:checked').value;
+    const location = locations['도서관'];
+    const url = (mode === 'map') ? location.mapLink : location.customLink;
+    window.open(url, '_blank');
+  }
+</script>
+
+</body>
+</html>
+
