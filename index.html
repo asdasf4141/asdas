@@ -49,6 +49,7 @@
       cursor: pointer;
       z-index: 5;
       transform: translate(-50%, -50%);
+      display: none;
     }
 
     #info-display {
@@ -61,10 +62,14 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
 
+    #info-display div {
+      margin-bottom: 12px;
+    }
+
     #info-display button {
       font-size: 14px;
       padding: 6px 12px;
-      margin-top: 8px;
+      margin-top: 4px;
       cursor: pointer;
     }
 
@@ -86,108 +91,161 @@
 
 <h2>상황 선택</h2>
 <div class="options">
+  <select id="situationSelect" onchange="changeSituation()">
+    <option value="공강시간" selected>공강시간</option>
+    <option value="버스정류장">버스정류장</option>
+  </select>
   <label><input type="radio" name="linkMode" value="custom" checked> 설정한 링크</label>
   <label><input type="radio" name="linkMode" value="map"> 구글맵</label>
 </div>
 
-<button onclick="showMarker('도서관')">공강시간</button>
-
 <div id="map-container">
   <img id="campus-map" src="campusmap.jpg" alt="캠퍼스 지도" onload="initializeMap()">
-
-  <div id="marker-library" class="marker" onclick="openLocation('도서관')" style="display:none;"></div>
-  <div id="marker-human" class="marker" onclick="openLocation('인문과학관')" style="display:none;"></div>
-  <div id="marker-science" class="marker" onclick="openLocation('자연과학관')" style="display:none;"></div>
-  <div id="marker-dorm1" class="marker" onclick="openLocation('향설생활관1')" style="display:none;"></div>
-  <div id="marker-dorm2" class="marker" onclick="openLocation('향설생활관2')" style="display:none;"></div>
 </div>
 
 <div id="info-display"></div>
 
 <script>
-  const locations = {
-    '도서관': {
+  const locations = [
+    {
+      situation: '공강시간',
+      name: '순천향대 도서관',
       xPercent: 66,
       yPercent: 18,
-      marker: 'marker-library',
-      name: '순천향대 도서관',
       description: '조용히 공부할 수 있는 순천향대 도서관입니다.',
-      customLink: 'https://library.example.com',
-      mapLink: 'https://maps.google.com?q=37.123456,127.123456',
+      customLink: '#',
+      mapLink: '#',
       number: '1'
     },
-    '인문과학관': {
+    {
+      situation: '공강시간',
+      name: '인문과학관',
       xPercent: 50,
       yPercent: 30,
-      marker: 'marker-human',
-      name: '인문과학관',
       description: '인문학 관련 수업이 진행되는 건물입니다.',
       customLink: '#',
       mapLink: '#',
       number: '2'
     },
-    '자연과학관': {
+    {
+      situation: '공강시간',
+      name: '자연과학관',
       xPercent: 40,
       yPercent: 45,
-      marker: 'marker-science',
-      name: '자연과학관',
       description: '과학 관련 실험과 수업이 진행됩니다.',
       customLink: '#',
       mapLink: '#',
       number: '3'
     },
-    '향설생활관1': {
+    {
+      situation: '공강시간',
+      name: '향설생활관 1',
       xPercent: 30,
       yPercent: 60,
-      marker: 'marker-dorm1',
-      name: '향설생활관 1',
       description: '학생 기숙사 (1관)',
       customLink: '#',
       mapLink: '#',
       number: '4'
     },
-    '향설생활관2': {
+    {
+      situation: '공강시간',
+      name: '향설생활관 2',
       xPercent: 70,
       yPercent: 65,
-      marker: 'marker-dorm2',
-      name: '향설생활관 2',
       description: '학생 기숙사 (2관)',
       customLink: '#',
       mapLink: '#',
       number: '5'
+    },
+    {
+      situation: '버스정류장',
+      name: '후문 정류장',
+      xPercent: 15,
+      yPercent: 80,
+      description: '캠퍼스 후문 쪽 정류장입니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '1'
+    },
+    {
+      situation: '버스정류장',
+      name: '향설2관 앞 정류장',
+      xPercent: 72,
+      yPercent: 68,
+      description: '향설생활관2 근처 정류장입니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '2'
+    },
+    {
+      situation: '버스정류장',
+      name: '도서관 정류장',
+      xPercent: 66,
+      yPercent: 22,
+      description: '도서관 앞쪽에 위치한 버스 정류장입니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '3'
+    },
+    {
+      situation: '버스정류장',
+      name: '정문 정류장',
+      xPercent: 90,
+      yPercent: 10,
+      description: '캠퍼스 정문 앞 정류장입니다.',
+      customLink: '#',
+      mapLink: '#',
+      number: '4'
     }
-  };
+  ];
 
   let campusMap;
 
   function initializeMap() {
     campusMap = document.getElementById('campus-map');
-    for (const place in locations) {
-      const location = locations[place];
-      const marker = document.getElementById(location.marker);
-      const rect = campusMap.getBoundingClientRect();
-      const x = (location.xPercent / 100) * rect.width;
-      const y = (location.yPercent / 100) * rect.height;
+    renderMarkers('공강시간'); // 기본 상황
+  }
+
+  function changeSituation() {
+    const selected = document.getElementById('situationSelect').value;
+    renderMarkers(selected);
+  }
+
+  function renderMarkers(situation) {
+    // 기존 마커 제거
+    document.querySelectorAll('.marker').forEach(el => el.remove());
+
+    const rect = campusMap.getBoundingClientRect();
+    const mapContainer = document.getElementById('map-container');
+
+    const filtered = locations.filter(loc => loc.situation === situation);
+    const infoDisplay = document.getElementById('info-display');
+    infoDisplay.innerHTML = '';
+    infoDisplay.style.display = 'block';
+
+    filtered.forEach(loc => {
+      const x = (loc.xPercent / 100) * rect.width;
+      const y = (loc.yPercent / 100) * rect.height;
+
+      const marker = document.createElement('div');
+      marker.className = 'marker';
       marker.style.left = x + 'px';
       marker.style.top = y + 'px';
-      marker.innerText = location.number;
-      marker.style.display = 'block';
-    }
+      marker.innerText = loc.number;
+      marker.onclick = () => openLocation(loc);
+      mapContainer.appendChild(marker);
+
+      infoDisplay.innerHTML += `
+        <div>
+          <strong>${loc.number}번 ${loc.name}</strong><br>
+          <p>${loc.description}</p>
+          <button onclick="openLocation(locations.find(l => l.name === '${loc.name}'))">이동</button>
+        </div>
+      `;
+    });
   }
 
-  function showMarker(place) {
-    const location = locations[place];
-    const infoDisplay = document.getElementById('info-display');
-    infoDisplay.style.display = 'block';
-    infoDisplay.innerHTML = `
-      <strong>${location.number}번 ${location.name}</strong><br>
-      <p>${location.description}</p>
-      <button onclick="openLocation('${place}')">이동</button>
-    `;
-  }
-
-  function openLocation(place) {
-    const location = locations[place];
+  function openLocation(location) {
     const mode = document.querySelector('input[name="linkMode"]:checked').value;
     const url = (mode === 'map') ? location.mapLink : location.customLink;
     window.open(url, '_blank');
@@ -196,4 +254,5 @@
 
 </body>
 </html>
+
 
