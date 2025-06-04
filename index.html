@@ -104,23 +104,32 @@
 <div id="info-display"></div>
 
 <script>
-  const INSTAGRAM_URL = 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg==';
+  const INSTAGRAM_LINKS = {
+    '공강시간': 'https://www.instagram.com/p/DKdpFrRBMqv/?utm_source=ig_web_copy_link',
+    '버스정류장': 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg=='
+  };
+
+  const GOOGLE_MAP_LINKS = {
+    '공강시간': 'https://maps.app.goo.gl/pzKaeQxnMErJn94QA',
+    '버스정류장': 'https://maps.app.goo.gl/LBRqyd1M83R6qYSs6'
+  };
 
   const locations = [
     // 공강시간
-    { situation: '공강시간', name: '순천향대 도서관', xPercent: 66, yPercent: 18, description: 'ASDF', customLink: '#', mapLink: '#', number: '1' },
-    { situation: '공강시간', name: '인문과학관', xPercent: 50, yPercent: 30, description: 'ASDF', customLink: '#', mapLink: '#', number: '2' },
-    { situation: '공강시간', name: '자연과학관', xPercent: 40, yPercent: 45, description: 'ASDF', customLink: '#', mapLink: '#', number: '3' },
-    { situation: '공강시간', name: '향설생활관 1', xPercent: 30, yPercent: 60, description: 'ASDF', customLink: '#', mapLink: '#', number: '4' },
-    { situation: '공강시간', name: '향설생활관 2', xPercent: 70, yPercent: 65, description: 'ASDF', customLink: '#', mapLink: '#', number: '5' },
+    { situation: '공강시간', name: '중앙도서관', xPercent: 65.5, yPercent: 45.3, description: '중앙 도서관 1층 아고라 에토스와 아고라 로고스', number: '1' },
+    { situation: '공강시간', name: '인문과학대', xPercent: 87.7, yPercent: 57.0, description: '인문과학대 1층 오른쪽 루첼라이뜰', number: '2' },
+    { situation: '공강시간', name: '미디어랩스', xPercent: 40.4, yPercent: 87.1, description: '미디어랩스 2층 글로벌 문화 카페', number: '3' },
+    { situation: '공강시간', name: '향설생활관 1', xPercent: 57.9, yPercent: 32.9, description: '향설1 로비', number: '4' },
+    { situation: '공강시간', name: '향설생활관 2', xPercent: 56.3, yPercent: 15.3, description: '향설2 로비와 그라찌에 카페', number: '5' },
+    { situation: '공강시간', name: '학생회관', xPercent: 52.8, yPercent: 58.7, description: '학생회관 1층 Job cafe', number: '6' },
 
     // 버스정류장
-    { situation: '버스정류장', name: '정문', xPercent: 81.9, yPercent: 67.8, description: '정문 ⮕ 후문', customLink: INSTAGRAM_URL, mapLink: '#', number: '1' },
-    { situation: '버스정류장', name: '후문', xPercent: 17.7, yPercent: 82.2, description: '후문 ⮕ 향설3관', customLink: INSTAGRAM_URL, mapLink: '#', number: '2' },
-    { situation: '버스정류장', name: '향설3관', xPercent: 43.2, yPercent: 6.8, description: '향설 3관 ⮕ 향설 2관', customLink: INSTAGRAM_URL, mapLink: '#', number: '3' },
-    { situation: '버스정류장', name: '향설 2관', xPercent: 62.7, yPercent: 22.3, description: '향설 2관 ⮕ 향설 기념 중앙도서관', customLink: INSTAGRAM_URL, mapLink: '#', number: '4' },
-    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 60.6, yPercent: 44.6, description: '향설 기념 중앙도서관 ⮕ 정문', customLink: INSTAGRAM_URL, mapLink: '#', number: '5' },
-    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 26.6, yPercent: 90.1, description: '학교 ⮕ 신창역', customLink: INSTAGRAM_URL, mapLink: '#', number: '6' }
+    { situation: '버스정류장', name: '정문', xPercent: 81.9, yPercent: 67.8, description: '정문 ⮕ 후문', number: '1' },
+    { situation: '버스정류장', name: '후문', xPercent: 17.7, yPercent: 82.2, description: '후문 ⮕ 향설3관', number: '2' },
+    { situation: '버스정류장', name: '향설3관', xPercent: 43.2, yPercent: 6.8, description: '향설 3관 ⮕ 향설 2관', number: '3' },
+    { situation: '버스정류장', name: '향설 2관', xPercent: 62.7, yPercent: 22.3, description: '향설 2관 ⮕ 향설 기념 중앙도서관', number: '4' },
+    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 60.6, yPercent: 44.6, description: '향설 기념 중앙도서관 ⮕ 정문', number: '5' },
+    { situation: '버스정류장', name: '후문(이승우 라운지)', xPercent: 26.6, yPercent: 90.1, description: '학교 ⮕ 신창역', number: '6' }
   ];
 
   let campusMap;
@@ -147,6 +156,17 @@
     infoDisplay.innerHTML = '';
     infoDisplay.style.display = 'block';
 
+    const instaLink = INSTAGRAM_LINKS[situation];
+    const googleMapLink = GOOGLE_MAP_LINKS[situation];
+
+    // 상단 공통 버튼 추가
+    infoDisplay.innerHTML += `
+      <div style="margin-bottom: 20px;">
+        <button onclick="window.open('${instaLink}', '_blank')">인스타 주소로 이동</button>
+        <button onclick="window.open('${googleMapLink}', '_blank')">구글맵으로 이동</button>
+      </div>
+    `;
+
     filtered.forEach(loc => {
       const x = (loc.xPercent / 100) * width;
       const y = (loc.yPercent / 100) * height;
@@ -163,8 +183,6 @@
         <div>
           <strong>${loc.number}번 ${loc.name}</strong><br>
           <p>${loc.description}</p>
-          <button onclick="window.open('${loc.mapLink}', '_blank')">구글맵으로 이동</button>
-          <button onclick="window.open('${loc.customLink}', '_blank')">인스타 주소로 이동</button>
         </div>
       `;
     });
@@ -173,5 +191,6 @@
 
 </body>
 </html>
+
 
 
