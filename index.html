@@ -95,6 +95,7 @@
     <option value="공강시간" selected>공강시간</option>
     <option value="버스정류장">버스정류장</option>
     <option value="식당">식당</option>
+    <option value="병원">병원</option>
   </select>
 </div>
 
@@ -108,13 +109,15 @@
   const INSTAGRAM_LINKS = {
     '공강시간': 'https://www.instagram.com/p/DKdpFrRBMqv/?utm_source=ig_web_copy_link',
     '버스정류장': 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg==',
-    '식당': 'https://www.instagram.com/p/DKi4XCPhMEo/?utm_source=ig_web_copy_link'
+    '식당': 'https://www.instagram.com/p/DKi4XCPhMEo/?utm_source=ig_web_copy_link',
+    '병원': 'https://www.instagram.com/we_are_cam_navi/'
   };
 
   const GOOGLE_MAP_LINKS = {
     '공강시간': 'https://maps.app.goo.gl/pzKaeQxnMErJn94QA',
     '버스정류장': 'https://maps.app.goo.gl/LBRqyd1M83R6qYSs6',
-    '식당': 'https://maps.app.goo.gl/iuSXTz22wLqXMgii8'
+    '식당': 'https://maps.app.goo.gl/iuSXTz22wLqXMgii8',
+    '병원': 'https://maps.app.goo.gl/ChxFKLr1gNKEtCmr6'
   };
 
   const locations = [
@@ -137,7 +140,12 @@
     { situation: '식당', name: '향설생활관 1관', xPercent: 57.4, yPercent: 35.0, description: '향설 1관 식당', number: '1' },
     { situation: '식당', name: '향설생활관 2관', xPercent: 55.9, yPercent: 15.0, description: '향설 2관 식당', number: '2' },
     { situation: '식당', name: '학생회관', xPercent: 52.4, yPercent: 59.2, description: '학생회관 식당', number: '3' },
-    { situation: '식당', name: '한마루관', xPercent: 34.3, yPercent: 59.9, description: '한마루관 교직원 식당', number: '4' }
+    { situation: '식당', name: '한마루관', xPercent: 34.3, yPercent: 59.9, description: '한마루관 교직원 식당', number: '4' },
+
+    // 병원
+    { situation: '병원', name: '향설2 보건실', xPercent: 56.3, yPercent: 15.3, description: '향설생활관 2관 내부 보건실', number: '1' },
+    { situation: '병원', name: '삼성바른의원', xPercent: null, yPercent: null, description: '후문 다이소 옆쪽에 위치한 병원   문의 연락처: 041-547-3848', number: '2' },
+    { situation: '병원', name: '우리한의원', xPercent: null, yPercent: null, description: '삼성바른위원 옆에 위치한 한의원   문의 연락처: 041- 543-1131', number: '3' },
   ];
 
   let campusMap;
@@ -176,29 +184,32 @@
     `;
 
     filtered.forEach(loc => {
-      const x = (loc.xPercent / 100) * width;
-      const y = (loc.yPercent / 100) * height;
-
-      const marker = document.createElement('div');
-      marker.className = 'marker';
-      marker.style.left = x + 'px';
-      marker.style.top = y + 'px';
-      marker.innerText = loc.number;
-      marker.style.display = 'block';
-      mapContainer.appendChild(marker);
-
       infoDisplay.innerHTML += `
         <div>
           <strong>${loc.number}번 ${loc.name}</strong><br>
           <p>${loc.description}</p>
         </div>
       `;
+
+      if (loc.xPercent !== null && loc.yPercent !== null) {
+        const x = (loc.xPercent / 100) * width;
+        const y = (loc.yPercent / 100) * height;
+
+        const marker = document.createElement('div');
+        marker.className = 'marker';
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+        marker.innerText = loc.number;
+        marker.style.display = 'block';
+        mapContainer.appendChild(marker);
+      }
     });
   }
 </script>
 
 </body>
 </html>
+
 
 
 
