@@ -94,6 +94,7 @@
   <select id="situationSelect" onchange="changeSituation()">
     <option value="공강시간" selected>공강시간</option>
     <option value="버스정류장">버스정류장</option>
+    <option value="식당">식당</option>
   </select>
 </div>
 
@@ -106,12 +107,14 @@
 <script>
   const INSTAGRAM_LINKS = {
     '공강시간': 'https://www.instagram.com/p/DKdpFrRBMqv/?utm_source=ig_web_copy_link',
-    '버스정류장': 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg=='
+    '버스정류장': 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg==',
+    '식당': 'https://www.instagram.com/p/DKi4XCPhMEo/?utm_source=ig_web_copy_link'
   };
 
   const GOOGLE_MAP_LINKS = {
     '공강시간': 'https://maps.app.goo.gl/pzKaeQxnMErJn94QA',
-    '버스정류장': 'https://maps.app.goo.gl/LBRqyd1M83R6qYSs6'
+    '버스정류장': 'https://maps.app.goo.gl/LBRqyd1M83R6qYSs6',
+    '식당': 'https://maps.app.goo.gl/iuSXTz22wLqXMgii8'
   };
 
   const locations = [
@@ -124,12 +127,17 @@
     { situation: '공강시간', name: '학생회관', xPercent: 52.8, yPercent: 58.7, description: '학생회관 1층 Job cafe', number: '6' },
 
     // 버스정류장
-    { situation: '버스정류장', name: '정문', xPercent: 81.9, yPercent: 67.8, description: '정문 ⮕ 후문', number: '1' },
-    { situation: '버스정류장', name: '후문', xPercent: 17.7, yPercent: 82.2, description: '후문 ⮕ 향설3관', number: '2' },
-    { situation: '버스정류장', name: '향설3관', xPercent: 43.2, yPercent: 6.8, description: '향설 3관 ⮕ 향설 2관', number: '3' },
-    { situation: '버스정류장', name: '향설 2관', xPercent: 62.7, yPercent: 22.3, description: '향설 2관 ⮕ 향설 기념 중앙도서관', number: '4' },
-    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 60.6, yPercent: 44.6, description: '향설 기념 중앙도서관 ⮕ 정문', number: '5' },
-    { situation: '버스정류장', name: '후문(이승우 라운지)', xPercent: 26.6, yPercent: 90.1, description: '학교 ⮕ 신창역', number: '6' }
+    { situation: '버스정류장', name: '후문', xPercent: 17.7, yPercent: 82.2, description: '후문 ⮕ 향설 3관', number: '1' },
+    { situation: '버스정류장', name: '향설3관', xPercent: 43.2, yPercent: 6.8, description: '향설 3관 ⮕ 향설 2관', number: '2' },
+    { situation: '버스정류장', name: '향설 2관', xPercent: 62.7, yPercent: 22.3, description: '향설 2관 ⮕ 향설 기념 중앙도서관', number: '3' },
+    { situation: '버스정류장', name: '향설기념 중앙도서관', xPercent: 60.6, yPercent: 44.6, description: '향설 기념 중앙도서관 ⮕ 정문', number: '4' },
+    { situation: '버스정류장', name: '정문', xPercent: 81.9, yPercent: 67.8, description: '정문 ⮕ 후문', number: '5' },
+
+    // 식당
+    { situation: '식당', name: '향설생활관 1관', xPercent: 57.4, yPercent: 35.0, description: '향설 1관 식당', number: '1' },
+    { situation: '식당', name: '향설생활관 2관', xPercent: 55.9, yPercent: 15.0, description: '향설 2관 식당', number: '2' },
+    { situation: '식당', name: '학생회관', xPercent: 52.4, yPercent: 59.2, description: '학생회관 식당', number: '3' },
+    { situation: '식당', name: '한마루관', xPercent: 34.3, yPercent: 59.9, description: '한마루관 교직원 식당', number: '4' }
   ];
 
   let campusMap;
@@ -159,7 +167,7 @@
     const instaLink = INSTAGRAM_LINKS[situation];
     const googleMapLink = GOOGLE_MAP_LINKS[situation];
 
-    // 상단 공통 버튼 추가
+    // 버튼 영역
     infoDisplay.innerHTML += `
       <div style="margin-bottom: 20px;">
         <button onclick="window.open('${instaLink}', '_blank')">인스타 주소로 이동</button>
