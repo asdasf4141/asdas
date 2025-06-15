@@ -12,29 +12,24 @@
       margin: 0;
       background-color: #f5f5f5;
     }
-
     h2 {
       margin-bottom: 10px;
     }
-
     .options {
       margin-bottom: 15px;
     }
-
     #map-container {
       position: relative;
       width: 100%;
       max-width: 1000px;
       margin: 0 auto;
     }
-
     #campus-map {
       width: 100%;
       height: auto;
       display: block;
       border: 1px solid #ccc;
     }
-
     .marker {
       position: absolute;
       background: red;
@@ -42,16 +37,15 @@
       font-size: 14px;
       font-weight: bold;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       text-align: center;
-      line-height: 24px;
+      line-height: 28px;
       cursor: pointer;
       z-index: 5;
       transform: translate(-50%, -50%);
       display: none;
     }
-
     #info-display {
       margin: 20px auto;
       background: white;
@@ -61,26 +55,22 @@
       display: none;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-
     #info-display div {
       margin-bottom: 12px;
     }
-
     #info-display button {
       font-size: 14px;
       padding: 6px 12px;
       margin: 4px 4px 0 0;
       cursor: pointer;
     }
-
     @media (max-width: 600px) {
       .marker {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         font-size: 12px;
-        line-height: 20px;
+        line-height: 22px;
       }
-
       #info-display {
         padding: 10px;
       }
@@ -96,6 +86,7 @@
     <option value="버스정류장">버스정류장</option>
     <option value="식당">식당</option>
     <option value="병원">병원</option>
+    <option value="ATM기">ATM기</option>
   </select>
 </div>
 
@@ -110,14 +101,16 @@
     '공강시간': 'https://www.instagram.com/p/DKdpFrRBMqv/?utm_source=ig_web_copy_link',
     '버스정류장': 'https://www.instagram.com/p/DKbCPVAhuGC/?igsh=MWh1MGlzZmNud3NoYg==',
     '식당': 'https://www.instagram.com/p/DKi4XCPhMEo/?utm_source=ig_web_copy_link',
-    '병원': 'https://www.instagram.com/we_are_cam_navi/'
+    '병원': 'https://www.instagram.com/p/DKlTmguh7pk/?utm_source=ig_web_copy_link',
+    'ATM기': 'https://www.instagram.com/we_are_cam_navi/'
   };
 
   const GOOGLE_MAP_LINKS = {
     '공강시간': 'https://maps.app.goo.gl/pzKaeQxnMErJn94QA',
     '버스정류장': 'https://maps.app.goo.gl/LBRqyd1M83R6qYSs6',
     '식당': 'https://maps.app.goo.gl/iuSXTz22wLqXMgii8',
-    '병원': 'https://maps.app.goo.gl/ChxFKLr1gNKEtCmr6'
+    '병원': 'https://maps.app.goo.gl/oM3fRYnmMCaLpMfQA',
+    'ATM기': 'https://maps.app.goo.gl/SgG5uDYnArf3qW7Q7?g_st=ac'
   };
 
   const locations = [
@@ -144,8 +137,18 @@
 
     // 병원
     { situation: '병원', name: '향설2 보건실', xPercent: 56.3, yPercent: 15.3, description: '향설생활관 2관 내부 보건실', number: '1' },
-    { situation: '병원', name: '삼성바른의원', xPercent: null, yPercent: null, description: '후문 다이소 옆쪽에 위치한 병원   문의 연락처: 041-547-3848', number: '2' },
-    { situation: '병원', name: '우리한의원', xPercent: null, yPercent: null, description: '삼성바른위원 옆에 위치한 한의원   문의 연락처: 041- 543-1131', number: '3' },
+    { situation: '병원', name: '삼성바른의원', xPercent: null, yPercent: null, description: '후문 다이소 옆쪽에 위치한 병원   (☎ 041-547-3848)', number: '2' },
+    { situation: '병원', name: '우리한의원', xPercent: null, yPercent: null, description: '삼성바른의원 옆에 위치한 한의원   (☎ 041- 543-1131)', number: '3' },
+
+    // ATM기 (1번과 8번이 같은 위치)
+    { situation: 'ATM기', name: '교육과학관 1층', xPercent: 39.4, yPercent: 58.0, description: '교육과학관 1층 24시간 이용 가능한 ATM기', number: '1' },
+    { situation: 'ATM기', name: '유니토피아 1층', xPercent: 44.6, yPercent: 32.9, description: '유니토피아관 1층 ATM', number: '2' },
+    { situation: 'ATM기', name: '향설1관', xPercent: 58.0, yPercent: 32.9, description: '향설생활관 1관 ATM', number: '3' },
+    { situation: 'ATM기', name: '향설2관', xPercent: 56.7, yPercent: 15.7, description: '향설생활관 2관 ATM', number: '4' },
+    { situation: 'ATM기', name: '향설3관', xPercent: 49.6, yPercent: 7.3, description: '향설생활관 3관 ATM', number: '5' },
+    { situation: 'ATM기', name: '대학본관 1층', xPercent: 75.1, yPercent: 48.1, description: '대학본관 1층 ATM', number: '6' },
+    { situation: 'ATM기', name: '공학관 1층', xPercent: 52.7, yPercent: 44.1, description: '공학관 1층 ATM', number: '7' },
+    { situation: 'ATM기', name: '신한은행', xPercent: 39.4, yPercent: 58.0, description: '교육과학관 1층 평일 9:00~16:00까지 운영 신한은행 (☎ 041-542-1693)', number: '8' }
   ];
 
   let campusMap;
@@ -175,7 +178,6 @@
     const instaLink = INSTAGRAM_LINKS[situation];
     const googleMapLink = GOOGLE_MAP_LINKS[situation];
 
-    // 버튼 영역
     infoDisplay.innerHTML += `
       <div style="margin-bottom: 20px;">
         <button onclick="window.open('${instaLink}', '_blank')">인스타 주소로 이동</button>
@@ -183,6 +185,8 @@
       </div>
     `;
 
+    
+    const grouped = {};
     filtered.forEach(loc => {
       infoDisplay.innerHTML += `
         <div>
@@ -192,23 +196,32 @@
       `;
 
       if (loc.xPercent !== null && loc.yPercent !== null) {
-        const x = (loc.xPercent / 100) * width;
-        const y = (loc.yPercent / 100) * height;
-
-        const marker = document.createElement('div');
-        marker.className = 'marker';
-        marker.style.left = x + 'px';
-        marker.style.top = y + 'px';
-        marker.innerText = loc.number;
-        marker.style.display = 'block';
-        mapContainer.appendChild(marker);
+        const key = `${loc.xPercent},${loc.yPercent}`;
+        if (!grouped[key]) grouped[key] = { x: loc.xPercent, y: loc.yPercent, numbers: [] };
+        grouped[key].numbers.push(loc.number);
       }
+    });
+
+   
+    Object.values(grouped).forEach(({ x, y, numbers }) => {
+      const xPx = (x / 100) * width;
+      const yPx = (y / 100) * height;
+
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.style.left = `${xPx}px`;
+      marker.style.top = `${yPx}px`;
+      marker.innerText = numbers.join(',');
+      marker.style.display = 'block';
+      mapContainer.appendChild(marker);
     });
   }
 </script>
 
 </body>
 </html>
+
+
 
 
 
